@@ -17,11 +17,6 @@ object PlaceholderContent {
      */
     val ITEMS: MutableList<PlaceholderItem> = ArrayList()
 
-    /**
-     * A map of sample (placeholder) items, by ID.
-     */
-    private val ITEM_MAP: MutableMap<Int, PlaceholderItem> = HashMap()
-
     private val deletedNumbers : Queue<Int> = LinkedList()
 
     private const val INITIAL_COUNT = 15
@@ -45,27 +40,26 @@ object PlaceholderContent {
 
     fun removeAt(position: Int) {
         val toRemove = ITEMS.removeAt(position)
-        if (toRemove.id == biggest) {
-            biggest--
-        }
-        deletedNumbers.add(toRemove.content.toInt())
-    }
-    
-    private fun addItem(item: PlaceholderItem) {
-        ITEMS.add(item)
-        ITEM_MAP[item.id] = item
+//        if (toRemove.content == biggest) {
+//            biggest--
+//        }
+        deletedNumbers.add(toRemove.content)
     }
 
-    private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(size(), "$position")
+    private fun addItem(item: PlaceholderItem) {
+        ITEMS.add(item)
+    }
+
+    private fun createPlaceholderItem(num: Int): PlaceholderItem {
+        return PlaceholderItem(num)
     }
 
     /**
      * A placeholder item representing a piece of content.
      */
-    data class PlaceholderItem(val id: Int, val content: String): Comparable<PlaceholderItem> {
-        override fun toString(): String = content
-        override fun compareTo(other: PlaceholderItem): Int = this.id.compareTo(other.id)
+    data class PlaceholderItem(val content: Int): Comparable<PlaceholderItem> {
+        override fun toString(): String = content.toString()
+        override fun compareTo(other: PlaceholderItem): Int = this.content.compareTo(other.content)
     }
     private const val TAG = "PLACEHOLDER"
 }

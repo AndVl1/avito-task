@@ -36,7 +36,6 @@ class NumbersRecyclerViewAdapter(
         val tickerChannel = ticker(delayMillis = 5000)
         mMainScope.launch {
             for (event in tickerChannel) {
-                Log.d("TICKER", "event")
                 addNumber()
             }
         }
@@ -54,10 +53,8 @@ class NumbersRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d(TAG, "$position")
         val item = values.ITEMS[position]
-        holder.idView.text = item.content
-
+        holder.idView.text = item.content.toString()
     }
 
     override fun getItemCount(): Int = values.ITEMS.size
@@ -85,7 +82,6 @@ class NumbersRecyclerViewAdapter(
             values.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, itemCount)
-            Log.d(TAG, "remove $position left $itemCount")
         }
 
         override fun toString(): String {
