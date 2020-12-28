@@ -1,7 +1,8 @@
 package ru.andvl.avitotask.placeholder
 
-import java.util.ArrayList
-import java.util.HashMap
+import android.util.Log
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -19,44 +20,50 @@ object PlaceholderContent {
     /**
      * A map of sample (placeholder) items, by ID.
      */
-    val ITEM_MAP: MutableMap<Int, PlaceholderItem> = HashMap()
+    private val ITEM_MAP: MutableMap<Int, PlaceholderItem> = HashMap()
 
-    private val COUNT = 15
+    private val deletedNumbers : Queue<Int> = LinkedList()
+
+    private const val INITIAL_COUNT = 15
+
+    private var biggest: Int
 
     init {
         // Add some sample items.
-        for (i in 1..COUNT) {
+        for (i in 1..INITIAL_COUNT) {
             addItem(createPlaceholderItem(i))
         }
+        biggest = ITEMS.last().id
     }
 
     fun addNext() {
-        val last = ITEMS.last()
-        addItem(createPlaceholderItem(last.id+1))
+        addItem(createPlaceholderItem(deletedNumbers.poll() ?: ++biggest))
+        Log.d(TAG, "add $biggest")
+    }
+
+    fun removeAt(position: Int) {
+        val toRemove = ITEMS.removeAt(position)
+        if (toRemove.id == biggest) {
+            biggest--
+        }
+        deletedNumbers.add(toRemove.id)
     }
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
-        ITEM_MAP.put(item.id, item)
+        ITEM_MAP[item.id] = item
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position, "${position + 1}", makeDetails(position))
-    }
-
-    private fun makeDetails(position: Int): String {
-        val builder = StringBuilder()
-        builder.append("Details about Item: ").append(position)
-        for (i in 0..position - 1) {
-            builder.append("\nMore details information here.")
-        }
-        return builder.toString()
+        return PlaceholderItem(position, "$position")
     }
 
     /**
      * A placeholder item representing a piece of content.
      */
-    data class PlaceholderItem(val id: Int, val content: String, val details: String) {
+    data class PlaceholderItem(val id: Int, val content: String): Comparable<PlaceholderItem> {
         override fun toString(): String = content
+        override fun compareTo(other: PlaceholderItem): Int = this.id.compareTo(other.id)
     }
+    private const val TAG = "PLACEHOLDER"
 }
