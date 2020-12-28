@@ -50,9 +50,7 @@ object PlaceholderContent {
         }
         deletedNumbers.add(toRemove.content.toInt())
     }
-
-
-
+    
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
         ITEM_MAP[item.id] = item

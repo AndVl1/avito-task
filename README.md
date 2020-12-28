@@ -16,3 +16,5 @@
 ##### Примечания:
 1. Задание желательно выполнять на Kotlin.
 2. Выполненное задание нужно загрузить на github.
+
+##### [APK файл решения](https://github.com/AndVl1/avito-task/app/release/app-release.apk)
