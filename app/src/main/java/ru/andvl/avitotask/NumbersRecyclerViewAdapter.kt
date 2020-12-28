@@ -54,52 +54,38 @@ class NumbersRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d(TAG, "$position")
         val item = values.ITEMS[position]
         holder.idView.text = item.content
-        holder.contentView.setOnClickListener {
-            values.removeAt(position)
-            notifyDataSetChanged()
-        }
-        setFadeAnimation(holder.binding.root)
+
     }
 
     override fun getItemCount(): Int = values.ITEMS.size
-
-    override fun onViewDetachedFromWindow(holder: ViewHolder) {
-        holder.clearAnimation()
-    }
 
     private fun addNumber() {
         values.addNext()
         notifyDataSetChanged()
     }
 
-    private fun addAnimation(viewToAnimate: View, position: Int) {
-        if (position > values.ITEMS.lastIndex-1) {
-            val animation: Animation = AnimationUtils.loadAnimation(
-                viewToAnimate.context,
-                R.anim.slide_in_left
-            )
-            viewToAnimate.startAnimation(animation)
-        }
-    }
-
-    private fun setFadeAnimation(view: View) {
-        val anim = AlphaAnimation(0.0f, 1.0f)
-        anim.duration = FADE_DURATION
-        view.startAnimation(anim)
-    }
-
     companion object{
-        private const val FADE_DURATION = 1000L
+        private const val TAG = "ADAPTER"
     }
 
-    inner class ViewHolder(val binding: RecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: RecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
         val contentView: Button = binding.deleteButton
 
-        fun clearAnimation() {
-            binding.root.clearAnimation()
+        init {
+            contentView.setOnClickListener {
+                removeAt(adapterPosition)
+            }
+        }
+
+        private fun removeAt(position: Int) {
+            values.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, itemCount)
+            Log.d(TAG, "remove $position left $itemCount")
         }
 
         override fun toString(): String {

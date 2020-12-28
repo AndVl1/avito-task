@@ -33,8 +33,10 @@ object PlaceholderContent {
         for (i in 1..INITIAL_COUNT) {
             addItem(createPlaceholderItem(i))
         }
-        biggest = ITEMS.last().id
+        biggest = ITEMS.size
     }
+
+    fun size() : Int = ITEMS.size
 
     fun addNext() {
         addItem(createPlaceholderItem(deletedNumbers.poll() ?: ++biggest))
@@ -46,8 +48,10 @@ object PlaceholderContent {
         if (toRemove.id == biggest) {
             biggest--
         }
-        deletedNumbers.add(toRemove.id)
+        deletedNumbers.add(toRemove.content.toInt())
     }
+
+
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
@@ -55,7 +59,7 @@ object PlaceholderContent {
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position, "$position")
+        return PlaceholderItem(size(), "$position")
     }
 
     /**
