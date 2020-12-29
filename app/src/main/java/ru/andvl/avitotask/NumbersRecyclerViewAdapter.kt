@@ -1,23 +1,17 @@
 package ru.andvl.avitotask
 
-import android.R
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ticker
-import ru.andvl.avitotask.NumbersFragment.*
 import ru.andvl.avitotask.databinding.RecyclerItemBinding
 import ru.andvl.avitotask.placeholder.PlaceholderContent
 import ru.andvl.avitotask.placeholder.PlaceholderContent.PlaceholderItem
-import java.util.*
 
 
 /**
@@ -31,6 +25,7 @@ class NumbersRecyclerViewAdapter(
 
     val mJob = Job()
     private val mMainScope = CoroutineScope(Dispatchers.Main + mJob)
+    private var lastIndex = 15
 
     init {
         val tickerChannel = ticker(delayMillis = 5000)
@@ -55,22 +50,31 @@ class NumbersRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values.ITEMS[position]
         holder.idView.text = item.content.toString()
+        setAnimation(holder.binding.root, position)
     }
 
     override fun getItemCount(): Int = values.ITEMS.size
 
     private fun addNumber() {
         values.addNext()
-        notifyDataSetChanged()
+        notifyItemInserted(values.size)
+    }
+
+    private fun setAnimation(view: View, position: Int) {
+        if (position > lastIndex) {
+            val animation = AnimationUtils.loadAnimation(view.context, R.anim.item_animation_slide_up)
+            view.startAnimation(animation)
+            lastIndex = position
+        }
     }
 
     companion object{
         private const val TAG = "ADAPTER"
     }
 
-    inner class ViewHolder(binding: RecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: RecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
-        val contentView: Button = binding.deleteButton
+        private val contentView: Button = binding.deleteButton
 
         init {
             contentView.setOnClickListener {
@@ -82,6 +86,7 @@ class NumbersRecyclerViewAdapter(
             values.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, itemCount)
+            lastIndex--
         }
 
         override fun toString(): String {

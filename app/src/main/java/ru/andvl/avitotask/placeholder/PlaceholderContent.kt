@@ -21,6 +21,8 @@ object PlaceholderContent {
 
     private const val INITIAL_COUNT = 15
 
+    val size: Int get() = size()
+
     private var biggest: Int
 
     init {
